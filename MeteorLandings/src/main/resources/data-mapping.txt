@@ -1,0 +1,40 @@
+curl -XPUT 'http://localhost:9200/test' -d '
+{
+    "mappings": {
+      "nasa": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nametype": {
+            "type": "string"
+          },
+          "recclass": {
+            "type": "string"
+          },
+          "massFF": {
+            "type": "double"
+          },
+          "fall": {
+            "type": "string"
+          },
+          "year": {
+            "type": "date",
+            "format": "year"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "reclat": {
+            "type": "double"
+          },
+          "reclong": {
+            "type": "double"
+          },
+          "Geolocation": {
+            "type": "string"
+          }
+        }
+      }
+    }
+} '
