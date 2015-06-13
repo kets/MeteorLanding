@@ -33,6 +33,11 @@ object MeteorsByYear {
     
    
     //Create a Spark RDD on top of Elasticsearch through EsInputFormat
+    //
+     // Read from ES using inputformat from org.elasticsearch.hadoop;
+     // note, that key [Text] specifies the document id (_id) and
+     // value [MapWritable] the document as a field -> value map
+    //
     val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
     println("currentResults: "+ currentResults)
     val meteors = currentResults.map{ case (key, value) => mapWritableToInput(value) }
