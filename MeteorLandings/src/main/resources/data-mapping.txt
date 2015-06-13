@@ -1,7 +1,7 @@
-curl -XPUT 'http://localhost:9200/test' -d '
+curl -XPUT 'http://localhost:9200/test2' -d '
 {
     "mappings": {
-      "nasa": {
+      "nasa2": {
         "properties": {
           "name": {
             "type": "string"
@@ -25,14 +25,15 @@ curl -XPUT 'http://localhost:9200/test' -d '
           "id": {
             "type": "integer"
           },
-          "reclat": {
+          "late": {
             "type": "double"
           },
-          "reclong": {
+          "lon": {
             "type": "double"
           },
-          "Geolocation": {
-            "type": "string"
+          "location": {
+            "type": "geo_point",
+            "lat_lon": true
           }
         }
       }
