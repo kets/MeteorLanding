@@ -1,7 +1,7 @@
 package meteorlandings
 
 import org.apache.spark.mllib.linalg._
-import org.apache.spark.mllib.feature.HashingTF
+import org.apache.spark.mllib.feature._
 import org.apache.spark.mllib.clustering.KMeans
 import org.elasticsearch.spark._
 import scala.collection.JavaConversions._
@@ -49,27 +49,31 @@ object MeteorClusters {
     println("currentResults: "+ currentResults)
     val meteors = currentResults.map{ case (key, value) => mapWritableToInput(value) }
     //val meteors = sqlCtx.esRDD("test/nasa", query)
-    
-      
-    
+       
     println("count: " + currentResults.count())
-    
-    // Extract the location into a map
-    val location = meteors.flatMap({meteor =>
-      meteor.getOrElse("location", "").split(" ")
-    })
     
     val fields = new Array[String](97)
     
+    // Extract the geelocation from each document and create a vector
     val vectors = meteors.map(meteor => toVector(meteor.getOrElse("location", "").split(","), fields))
     
     // Cluster the data into two classes using KMeans
-    val numClusters = 2
+    val numClusters = 5
     val numIterations = 20
-    val model = KMeans.train(vectors, numClusters, numIterations)
-      
     
-    println(vectors.countByValue())
+    //train the model
+    val model = KMeans.train(vectors, numClusters, numIterations)
+     
+    val clusterCenters = model.clusterCenters.map(_.toArray)
+    
+    val cost = model.computeCost(vectors)
+    println("cost: "+ cost)
+    
+    val meteorsByGroup = meteors.map{meteor => meteor.getOrElse("location", "").split(",").map(_.toDouble)}.groupBy { rdd => model.predict(Vectors.dense(rdd)) }.collect()
+    
+    meteorsByGroup.foreach(println)
+    
+    //println(vectors.countByValue())
 
     
     //val vectors = Vectors.dense(location)
