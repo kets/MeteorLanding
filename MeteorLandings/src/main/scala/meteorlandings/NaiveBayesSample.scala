@@ -1,0 +1,5 @@
+package meteorlandings
+
+object NaiveBayesSample {
+
+}
