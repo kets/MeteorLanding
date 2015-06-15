@@ -127,7 +127,7 @@ object NaiveBayesSample {
   def getImpactsByRegion(sc : SparkContext, regionGeo : (Double, List[String])) : Double = {
     
     //Configure the source (index)
-    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test2/nasa2", Some("http://127.0.0.1:9200"))
+    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
    
     val top_left_lat = regionGeo._2.get(0).split(",")(0).toDouble
     val top_left_lon = regionGeo._2.get(0).split(",")(1).toDouble

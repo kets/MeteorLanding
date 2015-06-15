@@ -1,7 +1,7 @@
-curl -XPUT 'http://localhost:9200/test2' -d '
+curl -XPUT 'http://localhost:9200/test3' -d '
 {
     "mappings": {
-      "nasa2": {
+      "nasa3": {
         "properties": {
           "name": {
             "type": "string"

@@ -27,12 +27,12 @@ curl -XGET 'http://localhost:9200/test2/nasa2/_search?pretty=true' -d '
         "geo_bounding_box": {
           "location": { 
             "top_left": {
-              "lat":  90.0,
-              "lon": -0.0
+              "lat":  0.0,
+              "lon": 90.0
             },
             "bottom_right": {
-              "lat": 0.0,
-              "lon": 90.0
+              "lat": 90.0,
+              "lon": 0.0
             }
           }
         }

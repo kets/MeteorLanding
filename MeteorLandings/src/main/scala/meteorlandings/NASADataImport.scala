@@ -52,9 +52,9 @@ object NASADataImport {
 
     // The results of SQL queries are SchemaRDDs and support all the normal RDD operations.
     // The columns of a row in the result can be accessed by ordinal.
-    results.map(t => "location: " + t(9)).take(25).foreach(println)
+    results.map(t => "location: " + t(9)).take(400).foreach(println)
     println("Count " + results.count())
-    results.saveToEs("test2/nasa2")
+    results.saveToEs("test3/nasa3")
 
   } 
   
