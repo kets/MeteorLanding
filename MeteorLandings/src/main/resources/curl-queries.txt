@@ -1,0 +1,107 @@
+curl -XGET 'http://localhost:9200/test2/nasa2/_search?pretty=true' -d '
+{
+"query": {
+        "filtered" : {
+            "query" : {
+                "match_all" : {}
+            },
+            "filter" : {
+                "geo_distance" : {
+                    "distance" : "1000km",
+                    "location" : {
+                        "lat" : 36.0,
+                        "lon" : 3.0
+                    }
+                }
+            }
+        }
+    }
+}'
+
+
+curl -XGET 'http://localhost:9200/test2/nasa2/_search?pretty=true' -d '
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_bounding_box": {
+          "location": { 
+            "top_left": {
+              "lat":  90.0,
+              "lon": -0.0
+            },
+            "bottom_right": {
+              "lat": 0.0,
+              "lon": 90.0
+            }
+          }
+        }
+      }
+    }
+  }
+}'
+
+
+{
+"query": {
+    "filtered" :  {
+        "filter" : {
+            "geo_bounding_box" : {
+                "location": { 
+                    "top_left": { 
+                        "lat" : " + top_left_lat + ",
+                         "lon" : " + top_left_lon + " 
+                        },
+                        "bottom_right": {
+                         "lat": " + bottom_right_lat + ",
+                          "lon": " + bottom_right_lon + "   
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+curl -XGET 'http://localhost:9200/test/range/_search?pretty=true' -d '
+{
+    "query" : {
+        "range" : {
+            "year" : { 
+                "gte" : "1800", 
+                "lte" : "2000"
+            }
+        }
+    }
+}
+'
+
+
+curl -XGET 'localhost:9200/test/_search?search_type=scan&scroll=10m&size=50' -d '
+{
+    "query" : {
+        "match_all" : {}
+    }
+}'
+
+curl -XGET 'http://localhost:9200/test2/nasa2/_search?pretty=true' -d '
+{
+ "query": {
+    "filtered": {
+      "filter": {
+        "geo_bounding_box": {
+          "location": { 
+            "top_left": {
+              "lat":  35.0,
+              "lon":  0.0
+            },
+            "bottom_right": {
+              "lat":  40.7,
+              "lon": -73.0
+            }
+          }
+        }
+      }
+    }
+  }
+}'
