@@ -149,7 +149,7 @@ object NaiveBayesSample {
     sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
 //    
     val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-    println("currentResults for region: --->" + regionGeo._1 + "\n" + currentResults.count())
+    println("currentResults for region: ---> " + regionGeo._1 + "\n" + currentResults.count())
     
     0.0
     
