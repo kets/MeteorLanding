@@ -1,3 +1,4 @@
 [0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/resources/curl-queries.txt,/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/curl-queries.txt)[0m
 [0m[[0mdebug[0m] [0m	(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/resources/data-mapping.txt,/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/data-mapping.txt)[0m
 [0m[[0mdebug[0m] [0m	(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/resources/nasadata.csv,/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/nasadata.csv)[0m

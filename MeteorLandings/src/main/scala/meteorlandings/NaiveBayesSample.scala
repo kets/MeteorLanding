@@ -149,7 +149,7 @@ object NaiveBayesSample {
     sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
 //    
     val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-    println("currentResults: "+ currentResults.count())
+    println("currentResults for region: --->" + regionGeo._1 + "\n" + currentResults.count())
     
     0.0
     
@@ -160,11 +160,11 @@ object NaiveBayesSample {
     var region1 = List("-180.0,90.0", "-90.0,0.0")
     var region2 = List("-90.0,90.0", "0.0,0.0")
     var region3 = List("0.0,90.0", "90.0,0.0")
-    var region4 = List("90.0,90.0", "180.0,90.0")
+    var region4 = List("90.0,90.0", "180.0,0.0")
     var region5 = List("-180.0,0.0", "-90.0,-90.0")
     var region6 = List("-90.0,0.0", "0.0,-90.0")
     var region7 = List("0.0,0.0", "90.0,-90.0")
-    var region8 = List("90.0,0.0", "180.0,180.0")
+    var region8 = List("90.0,0.0", "180.0,-90.0")
     
     var regionMap = Map(1.0 -> region1, 2.0 -> region2, 3.0 -> region3, 4.0 -> region4, 5.0 -> region5, 6.0 -> region6,
         7.0 -> region7, 8.0 -> region8)
