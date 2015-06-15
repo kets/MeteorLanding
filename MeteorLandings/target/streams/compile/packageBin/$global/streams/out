@@ -18,6 +18,8 @@
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorsByYear$.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorClusters$$anonfun$4$$anonfun$apply$3.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorClusters$$anonfun$4$$anonfun$apply$3.class[0m
+[0m[[0mdebug[0m] [0m	meteorlandings/BoundingBox.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/BoundingBox.class[0m
 [0m[[0mdebug[0m] [0m	nasadata.csv[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/nasadata.csv[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorsByYear.class[0m
@@ -36,8 +38,6 @@
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorsByYear$$anonfun$1.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorsByYear$$anonfun$2.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorsByYear$$anonfun$2.class[0m
-[0m[[0mdebug[0m] [0m	meteorlandings/NaiveBayesSample$$anonfun$3.class[0m
-[0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/NaiveBayesSample$$anonfun$3.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorClusters$$anonfun$4$$anonfun$apply$2.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorClusters$$anonfun$4$$anonfun$apply$2.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/NaiveBayesSample$$anonfun$1.class[0m
@@ -48,12 +48,8 @@
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorsByYear$$anonfun$3.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorClusters$$anonfun$4.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorClusters$$anonfun$4.class[0m
-[0m[[0mdebug[0m] [0m	meteorlandings/NaiveBayesSample$$anonfun$2$$anonfun$apply$1.class[0m
-[0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/NaiveBayesSample$$anonfun$2$$anonfun$apply$1.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorsByYear$$anonfun$mapWritableToInput$1.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorsByYear$$anonfun$mapWritableToInput$1.class[0m
-[0m[[0mdebug[0m] [0m	meteorlandings/NaiveBayesSample$$anonfun$2.class[0m
-[0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/NaiveBayesSample$$anonfun$2.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorLanding$.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorLanding$.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/NaiveBayesSample$$anonfun$mapWritableToInput$1.class[0m
@@ -78,6 +74,8 @@
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorLanding.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/SharedESConfig.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/SharedESConfig.class[0m
+[0m[[0mdebug[0m] [0m	meteorlandings/BoundingBox$.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/BoundingBox$.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorClusters$$anonfun$2.class[0m
 [0m[[0mdebug[0m] [0m	  /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes/meteorlandings/MeteorClusters$$anonfun$2.class[0m
 [0m[[0mdebug[0m] [0m	meteorlandings/MeteorClusters$$anonfun$3.class[0m

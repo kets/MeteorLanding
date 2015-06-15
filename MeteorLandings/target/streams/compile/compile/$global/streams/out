@@ -17,7 +17,7 @@
 [0m[[0minfo[0m] [0mCompiling 5 Scala sources to /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes...[0m
 [0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.10.4[0m
 [0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.10.4[0m
-[0m[[0mdebug[0m] [0mRunning cached compiler 77d367c8, interfacing (CompilerInterface) with Scala compiler version 2.10.4[0m
+[0m[[0mdebug[0m] [0mRunning cached compiler 5b03224, interfacing (CompilerInterface) with Scala compiler version 2.10.4[0m
 [0m[[0mdebug[0m] [0mCalling Scala compiler with arguments  (CompilerInterface):[0m
 [0m[[0mdebug[0m] [0m	-unchecked[0m
 [0m[[0mdebug[0m] [0m	-deprecation[0m
@@ -25,20 +25,13 @@
 [0m[[0mdebug[0m] [0m	/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/classes:/Users/kborkar/.sbt/boot/scala-2.10.4/lib/scala-library.jar[0m
 [0m[[0mdebug[0m] [0m	-classpath[0m
 [0m[[0mdebug[0m] [0m	/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/target/scala-2.10/classes:/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/lib/elasticsearch-spark_2.10-2.1.0.BUILD-SNAPSHOT.jar:/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/lib/spark-assembly-1.2.1-hadoop2.4.0.jar[0m
-[0m[[0mdebug[0m] [0mScala compilation took 4.968491 s[0m
+[0m[[0mdebug[0m] [0mScala compilation took 5.195099 s[0m
 [0m[[0mdebug[0m] [0mInvalidating /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorsByYear.scala...[0m
 [0m[[0mdebug[0m] [0mInvalidating (transitively) by inheritance from /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorsByYear.scala...[0m
 [0m[[0mdebug[0m] [0mInitial set of included nodes: Set(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorsByYear.scala)[0m
 [0m[[0mdebug[0m] [0mInvalidated by transitive inheritance dependency: Set(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorsByYear.scala)[0m
 [0m[[0mdebug[0m] [0mThe /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorsByYear.scala source file has the following regular definitions changed:[0m
 [0m[[0mdebug[0m] [0m	notify, wait, $asInstanceOf, MeteorsByYear, equals, asInstanceOf, synchronized, $isInstanceOf, main, notifyAll, mapWritableToInput, isInstanceOf, ==, clone, toString, !=, getClass, ne, eq, ##, finalize, hashCode.[0m
-[0m[[0mdebug[0m] [0mAll member reference dependencies will be considered within this context.[0m
-[0m[[0mdebug[0m] [0mInvalidating /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala...[0m
-[0m[[0mdebug[0m] [0mInvalidating (transitively) by inheritance from /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala...[0m
-[0m[[0mdebug[0m] [0mInitial set of included nodes: Set(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala)[0m
-[0m[[0mdebug[0m] [0mInvalidated by transitive inheritance dependency: Set(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala)[0m
-[0m[[0mdebug[0m] [0mThe /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala source file has the following regular definitions changed:[0m
-[0m[[0mdebug[0m] [0m	notify, wait, $asInstanceOf, equals, asInstanceOf, synchronized, $isInstanceOf, main, notifyAll, mapWritableToInput, isInstanceOf, NaiveBayesSample, ==, clone, toVector, toString, !=, getClass, ne, eq, ##, finalize, hashCode.[0m
 [0m[[0mdebug[0m] [0mAll member reference dependencies will be considered within this context.[0m
 [0m[[0mdebug[0m] [0mInvalidating /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/SharedESConfig.scala...[0m
 [0m[[0mdebug[0m] [0mInvalidating (transitively) by inheritance from /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/SharedESConfig.scala...[0m
@@ -48,7 +41,7 @@
 [0m[[0mdebug[0m] [0m	notify, setupEsOnSparkContext$default$4, wait, $asInstanceOf, equals, asInstanceOf, synchronized, $isInstanceOf, notifyAll, isInstanceOf, ==, clone, SharedESConfig, setupEsOnSparkContext$default$3, toString, setupEsOnSparkContext, !=, getClass, ne, eq, ##, finalize, hashCode.[0m
 [0m[[0mdebug[0m] [0mAll member reference dependencies will be considered within this context.[0m
 [0m[[0mdebug[0m] [0mThe following modified names cause invalidation of /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorClusters.scala: Set(SharedESConfig, toString, setupEsOnSparkContext, ne)[0m
-[0m[[0mdebug[0m] [0mThe following modified names cause invalidation of /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala: Set(SharedESConfig, toString, setupEsOnSparkContext, ne)[0m
+[0m[[0mdebug[0m] [0mThe following modified names cause invalidation of /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala: Set(asInstanceOf, isInstanceOf, ==, SharedESConfig, toString, setupEsOnSparkContext, ne, eq)[0m
 [0m[[0mdebug[0m] [0mThe following modified names cause invalidation of /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorsByYear.scala: Set(SharedESConfig, toString, setupEsOnSparkContext, ne)[0m
 [0m[[0mdebug[0m] [0mInvalidating /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NASADataImport.scala...[0m
 [0m[[0mdebug[0m] [0mInvalidating (transitively) by inheritance from /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NASADataImport.scala...[0m
@@ -63,6 +56,13 @@
 [0m[[0mdebug[0m] [0mInvalidated by transitive inheritance dependency: Set(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorClusters.scala)[0m
 [0m[[0mdebug[0m] [0mThe /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/MeteorClusters.scala source file has the following regular definitions changed:[0m
 [0m[[0mdebug[0m] [0m	notify, wait, $asInstanceOf, equals, asInstanceOf, synchronized, $isInstanceOf, main, notifyAll, mapWritableToInput, isInstanceOf, ==, clone, toVector, toString, !=, getClass, ne, MeteorClusters, eq, ##, finalize, hashCode.[0m
+[0m[[0mdebug[0m] [0mAll member reference dependencies will be considered within this context.[0m
+[0m[[0mdebug[0m] [0mInvalidating /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala...[0m
+[0m[[0mdebug[0m] [0mInvalidating (transitively) by inheritance from /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala...[0m
+[0m[[0mdebug[0m] [0mInitial set of included nodes: Set(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala)[0m
+[0m[[0mdebug[0m] [0mInvalidated by transitive inheritance dependency: Set(/Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala)[0m
+[0m[[0mdebug[0m] [0mThe /Users/kborkar/Documents/HackWeek/MeteorLanding/MeteorLandings/src/main/scala/meteorlandings/NaiveBayesSample.scala source file has the following regular definitions changed:[0m
+[0m[[0mdebug[0m] [0m	bottom_right, notify, wait, copy$default$2, $asInstanceOf, BoundingBox, mapRegionsToCoordinates, productArity, equals, asInstanceOf, synchronized, top_left, $isInstanceOf, canEqual, main, productPrefix, notifyAll, mapWritableToInput, isInstanceOf, <init>, NaiveBayesSample, ==, clone, toVector, copy, toString, !=, getClass, copy$default$1, ne, getImpactsByRegion, eq, productIterator, ##, finalize, productElement, hashCode.[0m
 [0m[[0mdebug[0m] [0mAll member reference dependencies will be considered within this context.[0m
 [0m[[0mdebug[0m] [0mNew invalidations:[0m
 [0m[[0mdebug[0m] [0m	Set()[0m

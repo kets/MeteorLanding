@@ -24,14 +24,11 @@ object NaiveBayesSample {
     conf.setMaster("spark://localhost:7077")
     val sc = new SparkContext(conf)    
       
-    //Configure the source (index)
-    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test2/nasa2", Some("http://127.0.0.1:9200"))
     
     val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
     
     //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
-    println("Using query "+query)
-    jobConf.set("es.query", query)
+    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test2/nasa2", Some("http://127.0.0.1:9200"))
     
     val esRDD = sc.esRDD("test2/nasa2", query)
     
@@ -39,20 +36,20 @@ object NaiveBayesSample {
      // note, that key [Object] specifies the document id (_id) and
      // value [MapWritable] the document as a field -> value map (location -> "34.45,23.45"
     //
-    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-    println("currentResults: "+ currentResults)
-    val meteors = currentResults.map { 
-      case (key, value) => mapWritableToInput(value) 
-      
-    }
-    //val meteors = sqlCtx.esRDD("test/nasa", query)
-       
-    println("count: " + currentResults.count())
-    
-    val meteorsMap = meteors.zipWithIndex().collect().toMap
-    //meteorsMap.foreach({case (key,value) => println(">>> key=" + key.getOrElse("year", "") + ", value=" + value)})
-    
-    val fields = new Array[String](97)
+//    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
+//    println("currentResults: "+ currentResults)
+//    val meteors = currentResults.map { 
+//      case (key, value) => mapWritableToInput(value) 
+//      
+//    }
+//    //val meteors = sqlCtx.esRDD("test/nasa", query)
+//       
+//    println("count: " + currentResults.count())
+//    
+//    val meteorsMap = meteors.zipWithIndex().collect().toMap
+//    //meteorsMap.foreach({case (key,value) => println(">>> key=" + key.getOrElse("year", "") + ", value=" + value)})
+//    
+//    val fields = new Array[String](97)
    // val parsedData = meteorsMap.foreach({case (key,value) => LabeledPoint(key.getOrElse("year", "").toDouble, toVector(key.getOrElse("location", "").split(","), fields))})
     
 //    val parsedData = meteorsMap.map{line => 
@@ -71,19 +68,19 @@ object NaiveBayesSample {
 //     
 //    }
     
-    val year = meteors.flatMap{meteor =>
-      meteor.getOrElse("year", "").split(" ")
-    }
-    val yearCounts = year.countByValue()
-    
-    val parsedData = yearCounts.map { line =>
-      val year = line._1.toDouble
-      val counts = line._2.toDouble
-       LabeledPoint(year, Vectors.dense(counts.toDouble))
-    }
-    
-   
-    println(parsedData)    
+//    val year = meteors.flatMap{meteor =>
+//      meteor.getOrElse("year", "").split(" ")
+//    }
+//    val yearCounts = year.countByValue()
+//    
+//    val parsedData = yearCounts.map { line =>
+//      val year = line._1.toDouble
+//      val counts = line._2.toDouble
+//       LabeledPoint(year, Vectors.dense(counts.toDouble))
+//    }
+//    
+//   
+//    println(parsedData)    
     //println(meteorsMap)
     //val vectors = meteors.map(meteor => toVector(meteor.getOrElse("location", "").split(","), fields))
    
@@ -99,6 +96,13 @@ object NaiveBayesSample {
     
     
     // Extract the geelocation from each document and create a vector
+    
+    
+    
+    
+    val regionImpacts =  mapRegionsToCoordinates().map{ line =>
+      getImpactsByRegion(sc, line)
+      }
    
     
   }
@@ -120,23 +124,49 @@ object NaiveBayesSample {
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
   }
   
-  def getImpactsByRegion() : Double = {
+  def getImpactsByRegion(sc : SparkContext, regionGeo : (Double, List[String])) : Double = {
+    
+    //Configure the source (index)
+    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test2/nasa2", Some("http://127.0.0.1:9200"))
+   
+    val top_left_lat = regionGeo._2.get(0).split(",")(0).toDouble
+    val top_left_lon = regionGeo._2.get(0).split(",")(1).toDouble
+    
+    val bottom_right_lat = regionGeo._2.get(1).split(",")(0).toDouble
+    val bottom_right_lon = regionGeo._2.get(1).split(",")(1).toDouble
+    
+    println("region: "+ regionGeo._1)
+    println("top_left_lat " + top_left_lat)
+    println("top_left_lon " + top_left_lon)
+    println("bottom_right_lat " + bottom_right_lat)
+    println("bottom_right_lon " + bottom_right_lon)
+    
+    
+//    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" : \" + -180.0 +  \"lon\" : \" + 90.0 + \" },\"bottom_right\": { \"lat\": \" + -90.0 + \"lon\": \" + 0.0 + \"   }}}}}}}"
+//    println("Using query "+query)
+//    jobConf.set("es.query", query)   
+//    
+//    sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
+//    
+//    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
+//    println("currentResults: "+ currentResults.count())
+    
     0.0
     
   }
   
-  def mapRegionsToCoordinates() : Map[Double, List[Array[String]]] = {
+  def mapRegionsToCoordinates() : Map[Double, List[String]] = {
     
-    val region1 = List(Array("-180.0,90.0", "-90.0,0.0"))
-    val region2 = List(Array("-90.0,90.0", "0.0,0.0"))
-    val region3 = List(Array("0.0,90.0", "90.0,0.0"))
-    val region4 = List(Array("90.0,90.0.0", "180.0,90.0"))
-    val region5 = List(Array("-180.0,0.0", "-90.0,-90.0"))
-    val region6 = List(Array("-90.0,0.0", "0.0,-90.0"))
-    val region7 = List(Array("0.0,0.0", "90.0,-90.0"))
-    val region8 = List(Array("90.0,0.0", "180.0,180.0"))
+    var region1 = List("-180.0,90.0", "-90.0,0.0")
+    var region2 = List("-90.0,90.0", "0.0,0.0")
+    var region3 = List("0.0,90.0", "90.0,0.0")
+    var region4 = List("90.0,90.0", "180.0,90.0")
+    var region5 = List("-180.0,0.0", "-90.0,-90.0")
+    var region6 = List("-90.0,0.0", "0.0,-90.0")
+    var region7 = List("0.0,0.0", "90.0,-90.0")
+    var region8 = List("90.0,0.0", "180.0,180.0")
     
-    val regionMap = Map(1.0 -> region1, 2.0 -> region2, 3.0 -> region3, 4.0 -> region4, 5.0 -> region5, 6.0 -> region6,
+    var regionMap = Map(1.0 -> region1, 2.0 -> region2, 3.0 -> region3, 4.0 -> region4, 5.0 -> region5, 6.0 -> region6,
         7.0 -> region7, 8.0 -> region8)
     
     return regionMap
