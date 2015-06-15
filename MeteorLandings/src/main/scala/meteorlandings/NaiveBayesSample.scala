@@ -142,14 +142,14 @@ object NaiveBayesSample {
     println("bottom_right_lon " + bottom_right_lon)
     
     
-//    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" : \" + -180.0 +  \"lon\" : \" + 90.0 + \" },\"bottom_right\": { \"lat\": \" + -90.0 + \"lon\": \" + 0.0 + \"   }}}}}}}"
-//    println("Using query "+query)
-//    jobConf.set("es.query", query)   
+    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ top_left_lat + ", \"lon\" : " + top_left_lon +"  },\"bottom_right\": { \"lat\":  "+ bottom_right_lat + ", \"lon\": " + bottom_right_lon + "    }}}}}}}"
+    println("Using query "+query)
+    jobConf.set("es.query", query)   
+    
+    sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
 //    
-//    sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-//    
-//    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-//    println("currentResults: "+ currentResults.count())
+    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
+    println("currentResults: "+ currentResults.count())
     
     0.0
     
