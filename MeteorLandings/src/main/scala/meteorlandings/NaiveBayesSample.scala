@@ -27,7 +27,8 @@ object NaiveBayesSample {
     //Configure the source (index)
     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test2/nasa2", Some("http://127.0.0.1:9200"))
     
-    val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1700\", \"lte\" : \"2050\" }}}}}}"
+    val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
+    
     //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
     println("Using query "+query)
     jobConf.set("es.query", query)
@@ -60,23 +61,39 @@ object NaiveBayesSample {
 //      LabeledPoint(year, Vectors.dense(line._1.getOrElse("location", "").split(",").map(_.toDouble)))}
     
     
-    val parsedData = meteors.flatMap{line => 
-      val year = line.getOrElse("year", "").toDouble
-      
-      LabeledPoint(year, Vectors.dense(line.getOrElse("location", "").split(",").map(_.toDouble), line.getOrElse("mass", "").toDouble))
-      
+//    val parsedData = meteors.flatMap{line => 
+//      val year = line.getOrElse("year", "").split("")     
+//      
+//      //val year = line.getOrElse("year", "").toDouble
+//      
+//      //LabeledPoint(year, Vectors.dense(line.getOrElse("location", "").split(",").map(x => x.toDouble), line.getOrElse("mass", "").toDouble))
+//     
+//     
+//    }
+    
+    val year = meteors.flatMap{meteor =>
+      meteor.getOrElse("year", "").split(" ")
+    }
+    val yearCounts = year.countByValue()
+    
+    val parsedData = yearCounts.map { line =>
+      val year = line._1.toDouble
+      val counts = line._2.toDouble
+       LabeledPoint(year, Vectors.dense(counts.toDouble))
     }
     
+   
+    println(parsedData)    
     //println(meteorsMap)
     //val vectors = meteors.map(meteor => toVector(meteor.getOrElse("location", "").split(","), fields))
    
     
-   // val model = NaiveBayes.train(parsedData)
-    
-    // Split data into training (60%) and test (40%).
-    val splits = parsedData.randomSplit(Array(0.6, 0.4), seed = 11L)
-    val training = splits(0)
-    val test = splits(1)
+    //val model = NaiveBayes.train(parsedData)
+//    
+////    // Split data into training (60%) and test (40%).
+//    val splits = parsedData.randomSplit(Array(0.6, 0.4), seed = 11L)
+//    val training = splits(0)
+//    val test = splits(1)
 
     
     
@@ -85,11 +102,14 @@ object NaiveBayesSample {
    
     
   }
-    private def toVector(data:Array[String], fields:Array[String]):Vector = {
+  
+  
+  
+  private def toVector(data:Array[String], fields:Array[String]):Vector = {
 
     val lat = data(0).toDouble
     val lon = data(1).toDouble
-
+  
     Vectors.dense(Array(lat,lon))
 
   }
@@ -100,5 +120,35 @@ object NaiveBayesSample {
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
   }
   
+  def getImpactsByRegion() : Double = {
+    0.0
+    
+  }
+  
+  def mapRegionsToCoordinates() : Map[Double, List[Array[String]]] = {
+    
+    val region1 = List(Array("-180.0,90.0", "-90.0,0.0"))
+    val region2 = List(Array("-90.0,90.0", "0.0,0.0"))
+    val region3 = List(Array("0.0,90.0", "90.0,0.0"))
+    val region4 = List(Array("90.0,90.0.0", "180.0,90.0"))
+    val region5 = List(Array("-180.0,0.0", "-90.0,-90.0"))
+    val region6 = List(Array("-90.0,0.0", "0.0,-90.0"))
+    val region7 = List(Array("0.0,0.0", "90.0,-90.0"))
+    val region8 = List(Array("90.0,0.0", "180.0,180.0"))
+    
+    val regionMap = Map(1.0 -> region1, 2.0 -> region2, 3.0 -> region3, 4.0 -> region4, 5.0 -> region5, 6.0 -> region6,
+        7.0 -> region7, 8.0 -> region8)
+    
+    return regionMap
+    
+    
+  }
+  
 
+}
+
+case class BoundingBox(
+  top_left: String,
+  bottom_right: String
+  ){
 }

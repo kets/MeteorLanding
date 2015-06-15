@@ -12,7 +12,7 @@ curl -XPUT 'http://localhost:9200/test2' -d '
           "recclass": {
             "type": "string"
           },
-          "massFF": {
+          "mass": {
             "type": "double"
           },
           "fall": {
@@ -25,7 +25,7 @@ curl -XPUT 'http://localhost:9200/test2' -d '
           "id": {
             "type": "integer"
           },
-          "late": {
+          "lat": {
             "type": "double"
           },
           "lon": {

@@ -58,7 +58,7 @@ object MeteorClusters {
     val vectors = meteors.map(meteor => toVector(meteor.getOrElse("location", "").split(","), fields))
     
     // Cluster the data into two classes using KMeans
-    val numClusters = 5
+    val numClusters = 10
     val numIterations = 20
     
     //train the model
@@ -69,7 +69,10 @@ object MeteorClusters {
     val cost = model.computeCost(vectors)
     println("cost: "+ cost)
     
-    val meteorsByGroup = meteors.map{meteor => meteor.getOrElse("location", "").split(",").map(_.toDouble)}.groupBy { rdd => model.predict(Vectors.dense(rdd)) }.collect()
+    val meteorsByGroup = meteors.map{meteor => 
+      meteor.getOrElse("location", "").split(",").map(_.toDouble)}.groupBy { rdd => 
+        model.predict(Vectors.dense(rdd)) 
+        }.collect()
     
     meteorsByGroup.foreach(println)
     
