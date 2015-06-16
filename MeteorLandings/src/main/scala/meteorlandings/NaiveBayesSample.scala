@@ -15,6 +15,7 @@ import org.apache.spark.SparkContext._
 import org.apache.spark._
 import org.apache.spark.sql._
 import scala.collection.JavaConversions._
+import org.apache.hadoop.mapred.JobConf
 
 
 object NaiveBayesSample {
@@ -28,9 +29,9 @@ object NaiveBayesSample {
     val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
     
     //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
-    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test2/nasa2", Some("http://127.0.0.1:9200"))
+    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
     
-    val esRDD = sc.esRDD("test2/nasa2", query)
+    val esRDD = sc.esRDD("test3/nasa3", query)
     
      // Read from ES using inputformat from org.elasticsearch.hadoop;
      // note, that key [Object] specifies the document id (_id) and
@@ -101,7 +102,7 @@ object NaiveBayesSample {
     
     
     val regionImpacts =  mapRegionsToCoordinates().map{ line =>
-      getImpactsByRegion(sc, line)
+      getImpactsByRegion(sc, jobConf, line)
       }
    
     
@@ -117,18 +118,17 @@ object NaiveBayesSample {
     Vectors.dense(Array(lat,lon))
 
   }
-  
-  
-  
+    
   def mapWritableToInput(in: MapWritable): Map[String, String] = {
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
   }
   
-  def getImpactsByRegion(sc : SparkContext, regionGeo : (Double, List[String])) : Double = {
+  def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : (Double, List[String])) : Double = {
     
     //Configure the source (index)
-    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
-   
+    //val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+    
+       
     val top_left_lat = regionGeo._2.get(0).split(",")(0).toDouble
     val top_left_lon = regionGeo._2.get(0).split(",")(1).toDouble
     
@@ -147,11 +147,20 @@ object NaiveBayesSample {
     jobConf.set("es.query", query)   
     
     sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-//    
-    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-    println("currentResults for region: ---> " + regionGeo._1 + "\n" + currentResults.count())
     
-    0.0
+    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
+    println("currentResults for region: ---> " + regionGeo._1 + "\nRESULTS-->" + currentResults.count())
+    
+    val meteors = currentResults.map{ case (key, value) => mapWritableToInput(value) }
+    
+   
+//    println("currentResults")
+//    println(meteors.flatMap({meteor =>
+//      meteor.getOrElse("location", "").split(",")  
+//    }).collect().length)  
+    
+    
+    currentResults.count()
     
   }
   
@@ -173,7 +182,6 @@ object NaiveBayesSample {
     
     
   }
-  
 
 }
 
