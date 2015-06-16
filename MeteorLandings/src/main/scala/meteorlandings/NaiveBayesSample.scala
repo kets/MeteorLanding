@@ -16,6 +16,7 @@ import org.apache.spark._
 import org.apache.spark.sql._
 import scala.collection.JavaConversions._
 import org.apache.hadoop.mapred.JobConf
+import org.elasticsearch.common.geo.GeoPoint;
 
 
 object NaiveBayesSample {
@@ -27,26 +28,27 @@ object NaiveBayesSample {
     val sc = new SparkContext(conf)    
       
     
-    val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
+    //val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
+    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ 0.0 + ", \"lon\" : " + 90.0 +"  },\"bottom_right\": { \"lat\":  "+ -180.0 + ", \"lon\": " + -90.0 + "    }}}}}}}"
     
     //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
-    
-    val esRDD = sc.esRDD("test3/nasa3", query)
-    
-     // Read from ES using inputformat from org.elasticsearch.hadoop;
-     // note, that key [Object] specifies the document id (_id) and
-     // value [MapWritable] the document as a field -> value map (location -> "34.45,23.45"
-    //
+//    
+//    val esRDD = sc.esRDD("test3/nasa3", query)
+//      
+//     // Read from ES using inputformat from org.elasticsearch.hadoop;
+//     // note, that key [Object] specifies the document id (_id) and
+//     // value [MapWritable] the document as a field -> value map (location -> "34.45,23.45"
+//    //
 //    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
 //    println("currentResults: "+ currentResults)
 //    val meteors = currentResults.map { 
 //      case (key, value) => mapWritableToInput(value) 
 //      
 //    }
-//    //val meteors = sqlCtx.esRDD("test/nasa", query)
-//       
-//    println("count: " + currentResults.count())
+    //val meteors = sqlCtx.esRDD("test/nasa", query)
+       
+   // println("count: " + currentResults.count())
 //    
 //    val meteorsMap = meteors.zipWithIndex().collect().toMap
 //    //meteorsMap.foreach({case (key,value) => println(">>> key=" + key.getOrElse("year", "") + ", value=" + value)})
@@ -121,29 +123,33 @@ object NaiveBayesSample {
   }
     
   def mapWritableToInput(in: MapWritable): Map[String, String] = {
+ 
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
   }
   
-  def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : (Double, List[String])) : Double = {
+  def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : (Double, List[GeoPoint])) : Double = {
     
     //Configure the source (index)
     //val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
     
        
-    val top_left_lat = regionGeo._2.get(0).split(",")(0).toDouble
-    val top_left_lon = regionGeo._2.get(0).split(",")(1).toDouble
-    
-    val bottom_right_lat = regionGeo._2.get(1).split(",")(0).toDouble
-    val bottom_right_lon = regionGeo._2.get(1).split(",")(1).toDouble
+      val top_left_lat = regionGeo._2.get(0).getLat()
+      val top_left_lon = regionGeo._2.get(0).getLon
+      
+      val bottom_right_lat = regionGeo._2.get(1).getLat
+      val bottom_right_lon = regionGeo._2.get(1).getLon
+      val topLeft = regionGeo._2.get(0)
+      val bottomRight = regionGeo._2.get(1)
     
     println("region: "+ regionGeo._1)
-    println("top_left_lat " + top_left_lat)
-    println("top_left_lon " + top_left_lon)
-    println("bottom_right_lat " + bottom_right_lat)
-    println("bottom_right_lon " + bottom_right_lon)
+//    println("top_left " + top_left_lat)
+//    println("top_left_lon " + top_left_lon)
+//    println("bottom_right " + bottom_right_lat)
+//    println("bottom_right_lon " + bottom_right_lon)
     
     
-    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ top_left_lat + ", \"lon\" : " + top_left_lon +"  },\"bottom_right\": { \"lat\":  "+ bottom_right_lat + ", \"lon\": " + bottom_right_lon + "    }}}}}}}"
+    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\":  "+ topLeft  + ", \"bottom_right\":   "+ bottomRight + "    }}}}}}}"
+    //val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ top_left_lat + ", \"lon\" : " + top_left_lon +"  },\"bottom_right\": { \"lat\":  "+ bottom_right_lat + ", \"lon\": " + bottom_right_lon+ "    }}}}}}}"
     println("Using query "+query)
     jobConf.set("es.query", query)   
     
@@ -165,16 +171,17 @@ object NaiveBayesSample {
     
   }
   
-  def mapRegionsToCoordinates() : Map[Double, List[String]] = {
+  def mapRegionsToCoordinates() : Map[Double, List[GeoPoint]] = {
+        
     
-    var region1 = List("-180.0,90.0", "-90.0,0.0")
-    var region2 = List("-90.0,90.0", "0.0,0.0")
-    var region3 = List("0.0,90.0", "90.0,0.0")
-    var region4 = List("90.0,90.0", "180.0,0.0")
-    var region5 = List("-180.0,0.0", "-90.0,-90.0")
-    var region6 = List("-90.0,0.0", "0.0,-90.0")
-    var region7 = List("0.0,0.0", "90.0,-90.0")
-    var region8 = List("90.0,0.0", "180.0,-90.0")
+    var region1 = List(new GeoPoint(-180.0,90.0), new GeoPoint(-90.0,0.0))
+    var region2 = List(new GeoPoint(-90.0,90.0), new GeoPoint(0.0,0.0))
+    var region3 = List(new GeoPoint(0.0,90.0), new GeoPoint(90.0,0.0))
+    var region4 = List(new GeoPoint(90.0,90.0), new GeoPoint(180.0,0.0))
+    var region5 = List(new GeoPoint(-180.0,0.0), new GeoPoint(-90.0,-90.0))
+    var region6 = List(new GeoPoint(-90.0,0.0), new GeoPoint(0.0,-90.0))
+    var region7 = List(new GeoPoint(0.0,0.0), new GeoPoint(90.0,-90.0))
+    var region8 = List(new GeoPoint(90.0,0.0), new GeoPoint(180.0,-90.0))
     
     var regionMap = Map(1.0 -> region1, 2.0 -> region2, 3.0 -> region3, 4.0 -> region4, 5.0 -> region5, 6.0 -> region6,
         7.0 -> region7, 8.0 -> region8)

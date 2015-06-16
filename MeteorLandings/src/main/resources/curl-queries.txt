@@ -44,6 +44,24 @@ curl -XGET 'http://localhost:9200/test2/nasa2/_search?pretty=true' -d '
 
 curl -XGET 'http://localhost:9200/test3/nasa3/_search?pretty=true' -d '
 {
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_bounding_box": {
+         "type" : "indexed",
+          "location": { 
+            "top_left": "90.0, -90.0",
+            "bottom_right": "-90.0, 90.0"
+            }
+          }
+        }
+      }
+    }
+  }
+}'
+
+curl -XGET 'http://localhost:9200/test3/nasa3/_search?pretty=true' -d '
+{
    "query": {
      "filtered": {
        "filter": {
