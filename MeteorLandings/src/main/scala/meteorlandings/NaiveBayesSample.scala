@@ -23,6 +23,7 @@ object NaiveBayesSample {
   def main(args: Array[String]){
     val conf = new SparkConf
     conf.setMaster("spark://localhost:7077")
+    conf.setAppName("MeteorLandings")
     val sc = new SparkContext(conf)    
       
     
