@@ -106,7 +106,9 @@ object NaiveBayesSample {
     
     val regionImpacts =  mapRegionsToCoordinates().map{ line =>
       getImpactsByRegion(sc, jobConf, line)
-      }
+      }.map{(line =>
+        LabeledPoint(line.)
+        )}
    
     
   }
@@ -127,21 +129,21 @@ object NaiveBayesSample {
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
   }
   
-  def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : (Double, List[GeoPoint])) : Double = {
+  def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : (Double, List[GeoPoint])) : Map[Double,Double] = {
     
-    //Configure the source (index)
-    //val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+  //Configure the source (index)
+  //val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+  
+     
+//    val top_left_lat = regionGeo._2.get(0).getLat
+//    val top_left_lon = regionGeo._2.get(0).getLon    
+//    val bottom_right_lat = regionGeo._2.get(1).getLat
+//    val bottom_right_lon = regionGeo._2.get(1).getLon
     
-       
-      val top_left_lat = regionGeo._2.get(0).getLat()
-      val top_left_lon = regionGeo._2.get(0).getLon
-      
-      val bottom_right_lat = regionGeo._2.get(1).getLat
-      val bottom_right_lon = regionGeo._2.get(1).getLon
-      val topLeft = regionGeo._2.get(0)
-      val bottomRight = regionGeo._2.get(1)
-    
-    println("region: "+ regionGeo._1)
+    val topLeft = regionGeo._2.get(0)
+    val bottomRight = regionGeo._2.get(1)
+  
+//    println("region: "+ regionGeo._1)
 //    println("top_left " + top_left_lat)
 //    println("top_left_lon " + top_left_lon)
 //    println("bottom_right " + bottom_right_lat)
@@ -159,15 +161,10 @@ object NaiveBayesSample {
     println("currentResults for region: ---> " + regionGeo._1 + "\nRESULTS-->" + currentResults.count())
     
     val meteors = currentResults.map{ case (key, value) => mapWritableToInput(value) }
+        
     
-   
-//    println("currentResults")
-//    println(meteors.flatMap({meteor =>
-//      meteor.getOrElse("location", "").split(",")  
-//    }).collect().length)  
-    
-    
-    currentResults.count()
+    val regionByImpacts = Map(regionGeo._1 -> currentResults.count().toDouble)
+    return regionByImpacts
     
   }
   
