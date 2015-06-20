@@ -40,77 +40,47 @@ object NaiveBayesSample {
 //     // note, that key [Object] specifies the document id (_id) and
 //     // value [MapWritable] the document as a field -> value map (location -> "34.45,23.45"
 //    //
-//    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
-//    println("currentResults: "+ currentResults)
-//    val meteors = currentResults.map { 
-//      case (key, value) => mapWritableToInput(value) 
-//      
-//    }
-    //val meteors = sqlCtx.esRDD("test/nasa", query)
-       
-   // println("count: " + currentResults.count())
-//    
-//    val meteorsMap = meteors.zipWithIndex().collect().toMap
-//    //meteorsMap.foreach({case (key,value) => println(">>> key=" + key.getOrElse("year", "") + ", value=" + value)})
-//    
-//    val fields = new Array[String](97)
-   // val parsedData = meteorsMap.foreach({case (key,value) => LabeledPoint(key.getOrElse("year", "").toDouble, toVector(key.getOrElse("location", "").split(","), fields))})
-    
-//    val parsedData = meteorsMap.map{line => 
-//      val year = line._1.getOrElse("year", "").toDouble
-//      
-//      LabeledPoint(year, Vectors.dense(line._1.getOrElse("location", "").split(",").map(_.toDouble)))}
-    
-    
-//    val parsedData = meteors.flatMap{line => 
-//      val year = line.getOrElse("year", "").split("")     
-//      
-//      //val year = line.getOrElse("year", "").toDouble
-//      
-//      //LabeledPoint(year, Vectors.dense(line.getOrElse("location", "").split(",").map(x => x.toDouble), line.getOrElse("mass", "").toDouble))
-//     
-//     
-//    }
-    
-//    val year = meteors.flatMap{meteor =>
-//      meteor.getOrElse("year", "").split(" ")
-//    }
-//    val yearCounts = year.countByValue()
-//    
-//    val parsedData = yearCounts.map { line =>
-//      val year = line._1.toDouble
-//      val counts = line._2.toDouble
-//       LabeledPoint(year, Vectors.dense(counts.toDouble))
-//    }
-//    
-//   
-//    println(parsedData)    
-    //println(meteorsMap)
-    //val vectors = meteors.map(meteor => toVector(meteor.getOrElse("location", "").split(","), fields))
-   
-    
-    //val model = NaiveBayes.train(parsedData)
-//    
-////    // Split data into training (60%) and test (40%).
-//    val splits = parsedData.randomSplit(Array(0.6, 0.4), seed = 11L)
-//    val training = splits(0)
-//    val test = splits(1)
+
 
     
     
     
-    // Extract the geelocation from each document and create a vector
-    
+    // get the impacts per region    
     val regionImpacts =  mapRegionsToCoordinates().map{ line =>
       getImpactsByRegion(sc, jobConf, line)
       }
     
-    
    
+    //create the labeled points and vectors
+    val parsedData = regionImpacts.toList.head.map({x => 
+      LabeledPoint(x._1, Vectors.dense(x._2))  
+    })
+    
+    //convert map to RDD
+    val rddRegionImpacts = sc.parallelize(parsedData.toList.seq)
+    
+    trainNaiveBayes(rddRegionImpacts)
     
   }
   
-  
+  private def trainNaiveBayes(rddRegionImpacts: RDD[LabeledPoint]){
+    
+     // Split data into training (60%) and test (40%).
+    val splits = rddRegionImpacts.randomSplit(Array(0.6, 0.4), seed = 11L)
+    val training = splits(0)
+    val test = splits(1)
+
+    val model = NaiveBayes.train(training, lambda = 1.0)
+    
+    val predictionAndLabel = test.map(p => (model.predict(p.features), p.label))
+    
+    println("predictionAndLabel: " + predictionAndLabel)
+    
+    val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
+    
+    println("accuracy: " + accuracy)
+    
+  }
   
   private def toVector(data:Array[String], fields:Array[String]):Vector = {
 
