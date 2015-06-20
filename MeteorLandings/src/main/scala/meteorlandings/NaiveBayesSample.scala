@@ -39,11 +39,9 @@ object NaiveBayesSample {
    
 
     // get the impacts per region    
-    val regionImpacts =  mapRegionsToCoordinates().map(){ line =>
+    val regionImpacts =  mapRegionsToCoordinates().map({ line =>
       getImpactsByRegion(sc, jobConf, line)
-      }).toMap
-    
-   
+      })
     
     //convert map to RDD
     val rddRegionImpacts = sc.parallelize(regionImpacts.toList.seq)
@@ -51,17 +49,16 @@ object NaiveBayesSample {
      
     
     //create the labeled points and vectors
-//    val parsedData = rddRegionImpacts.map({x =>
-//      x.foreach({case(key, value) =>
-//        LabeledPoint(key, Vectors.dense(value)) 
-//        
-//      })
-//       
-//    })
-//    println("----parsedData-----"+ parsedData.count())
+    val parsedData = rddRegionImpacts.map({x =>
+      x.map({case(key, value) =>
+        LabeledPoint(key, Vectors.dense(value))         
+      })       
+    })
+    
+    println("----parsedData-----"+ parsedData.count())
    
     
-    //trainNaiveBayes(rddRegionImpacts)
+//    trainNaiveBayes(rddRegionImpacts)
     
   }
   
