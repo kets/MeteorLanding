@@ -101,14 +101,11 @@ object NaiveBayesSample {
     
     // Extract the geelocation from each document and create a vector
     
-    
-    
-    
     val regionImpacts =  mapRegionsToCoordinates().map{ line =>
       getImpactsByRegion(sc, jobConf, line)
-      }.map{(line =>
-        LabeledPoint(line.)
-        )}
+      }
+    
+    
    
     
   }
