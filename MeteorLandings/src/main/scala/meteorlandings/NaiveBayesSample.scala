@@ -36,30 +36,32 @@ object NaiveBayesSample {
 //    
 //    val esRDD = sc.esRDD("test3/nasa3", query)
 //      
-//     // Read from ES using inputformat from org.elasticsearch.hadoop;
-//     // note, that key [Object] specifies the document id (_id) and
-//     // value [MapWritable] the document as a field -> value map (location -> "34.45,23.45"
-//    //
+   
 
-
-    
-    
-    
     // get the impacts per region    
-    val regionImpacts =  mapRegionsToCoordinates().map{ line =>
+    val regionImpacts =  mapRegionsToCoordinates().map(){ line =>
       getImpactsByRegion(sc, jobConf, line)
-      }
+      }).toMap
     
    
-    //create the labeled points and vectors
-    val parsedData = regionImpacts.toList.head.map({x => 
-      LabeledPoint(x._1, Vectors.dense(x._2))  
-    })
     
     //convert map to RDD
-    val rddRegionImpacts = sc.parallelize(parsedData.toList.seq)
+    val rddRegionImpacts = sc.parallelize(regionImpacts.toList.seq)
     
-    trainNaiveBayes(rddRegionImpacts)
+     
+    
+    //create the labeled points and vectors
+//    val parsedData = rddRegionImpacts.map({x =>
+//      x.foreach({case(key, value) =>
+//        LabeledPoint(key, Vectors.dense(value)) 
+//        
+//      })
+//       
+//    })
+//    println("----parsedData-----"+ parsedData.count())
+   
+    
+    //trainNaiveBayes(rddRegionImpacts)
     
   }
   
@@ -67,16 +69,23 @@ object NaiveBayesSample {
     
      // Split data into training (60%) and test (40%).
     val splits = rddRegionImpacts.randomSplit(Array(0.6, 0.4), seed = 11L)
+    println("----rddRegionImpacts-----"+ rddRegionImpacts.count())
     val training = splits(0)
     val test = splits(1)
 
-    val model = NaiveBayes.train(training, lambda = 1.0)
+    println("----training-----"+ training.count())
     
-    val predictionAndLabel = test.map(p => (model.predict(p.features), p.label))
+    println("----test-----"+ test.count())
     
-    println("predictionAndLabel: " + predictionAndLabel)
+    val model = NaiveBayes.train(rddRegionImpacts, lambda = 1.0)
     
-    val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
+    println("model: "+ model.labels.length)
+    
+    val predictionAndLabel = rddRegionImpacts.map(p => (model.predict(p.features), p.label))
+    
+    println("----predictionAndLabel-----"+ predictionAndLabel.count())
+    
+    val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / rddRegionImpacts.count()
     
     println("accuracy: " + accuracy)
     
@@ -122,6 +131,10 @@ object NaiveBayesSample {
     println("Using query "+query)
     jobConf.set("es.query", query)   
     
+      // Read from ES using inputformat from org.elasticsearch.hadoop;
+     // note, that key [Object] specifies the document id (_id) and
+     // value [MapWritable] the document as a field -> value map (location -> "34.45,23.45"
+    
     sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
     
     val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
@@ -135,8 +148,7 @@ object NaiveBayesSample {
     
   }
   
-  def mapRegionsToCoordinates() : Map[Double, List[GeoPoint]] = {
-        
+  def mapRegionsToCoordinates() : Map[Double, List[GeoPoint]] = {        
     
     var region1 = List(new GeoPoint(-180.0,90.0), new GeoPoint(-90.0,0.0))
     var region2 = List(new GeoPoint(-90.0,90.0), new GeoPoint(0.0,0.0))
@@ -150,8 +162,7 @@ object NaiveBayesSample {
     var regionMap = Map(1.0 -> region1, 2.0 -> region2, 3.0 -> region3, 4.0 -> region4, 5.0 -> region5, 6.0 -> region6,
         7.0 -> region7, 8.0 -> region8)
     
-    return regionMap
-    
+    return regionMap   
     
   }
 
