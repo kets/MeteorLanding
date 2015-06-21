@@ -42,23 +42,34 @@ object NaiveBayesSample {
     val regionImpacts =  mapRegionsToCoordinates().map({ line =>
       getImpactsByRegion(sc, jobConf, line)
       })
+      
+    val flatRegion = regionImpacts.flatten
+    
+    val rdd = flatRegion.map({
+      x => LabeledPoint(x._1, Vectors.dense(x._2)
+    )})
     
     //convert map to RDD
-    val rddRegionImpacts = sc.parallelize(regionImpacts.toList.seq)
+    val rddRegionImpacts = sc.parallelize(rdd.toSeq)
     
-     
+    println("---rddRegionImpacts--- " + rddRegionImpacts.count)
     
-    //create the labeled points and vectors
-    val parsedData = rddRegionImpacts.map({x =>
-      x.map({case(key, value) =>
-        LabeledPoint(key, Vectors.dense(value))         
-      })       
-    })
     
-    println("----parsedData-----"+ parsedData.count())
+//    //create the labeled points and vectors
+//    val parsedData = rddRegionImpacts.map({x =>
+//      x.map({case(key, value) =>
+//        LabeledPoint(key, Vectors.dense(value))         
+//      })      
+//    })
+    
+   
+   
+
+    
+   // println("----parsedData-----"+ parsedData.count())
    
     
-//    trainNaiveBayes(rddRegionImpacts)
+    trainNaiveBayes(rddRegionImpacts)
     
   }
   
@@ -74,15 +85,15 @@ object NaiveBayesSample {
     
     println("----test-----"+ test.count())
     
-    val model = NaiveBayes.train(rddRegionImpacts, lambda = 1.0)
+    val model = NaiveBayes.train(training, lambda = 1.0)
     
     println("model: "+ model.labels.length)
     
-    val predictionAndLabel = rddRegionImpacts.map(p => (model.predict(p.features), p.label))
+    val predictionAndLabel = test.map(p => (model.predict(p.features), p.label))
     
     println("----predictionAndLabel-----"+ predictionAndLabel.count())
     
-    val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / rddRegionImpacts.count()
+    val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
     
     println("accuracy: " + accuracy)
     
@@ -100,6 +111,19 @@ object NaiveBayesSample {
   def mapWritableToInput(in: MapWritable): Map[String, String] = {
  
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
+  }
+  
+  
+  def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : Map[Double, List[GeoPoint]]): Map[Double,Double] = {
+     val regionImpacts = mapRegionsToCoordinates().map({ line =>
+      getImpactsByRegion(sc, jobConf, line)
+      }).flatten.toSeq
+   
+      val rdd = sc.parallelize(regionImpacts)
+    
+   
+    Map(0.0 -> 0.0)
+    
   }
   
   def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : (Double, List[GeoPoint])) : Map[Double,Double] = {
