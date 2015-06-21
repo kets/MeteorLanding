@@ -53,6 +53,8 @@ object MeteorsByYear {
       meteor => meteor.getOrElse("recclass", "").split("")
     }
     
+    println("meteorClass: "+ meteorClass.countByValue())
+    
     val yearCounts = year.countByValue()
     println("yearCounts: "+ yearCounts)
     
