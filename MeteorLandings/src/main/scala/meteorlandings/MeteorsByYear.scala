@@ -22,7 +22,7 @@ object MeteorsByYear {
     val sc = new SparkContext(conf)    
     
      //Configure the source (index)
-     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test2/nasa2", Some("http://127.0.0.1:9200"))
+     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
      
     
     //Setup the query

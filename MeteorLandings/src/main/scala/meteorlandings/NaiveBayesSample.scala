@@ -83,6 +83,7 @@ object NaiveBayesSample {
     
     println("accuracy: " + accuracy)
     
+    
   }
   
  
