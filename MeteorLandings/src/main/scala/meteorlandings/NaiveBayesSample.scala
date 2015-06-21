@@ -28,76 +28,64 @@ object NaiveBayesSample {
     val sc = new SparkContext(conf)    
       
     
-    //val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
-    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ 0.0 + ", \"lon\" : " + 90.0 +"  },\"bottom_right\": { \"lat\":  "+ -180.0 + ", \"lon\": " + -90.0 + "    }}}}}}}"
-    
-    //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
-    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+//    //val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
+//    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ 0.0 + ", \"lon\" : " + 90.0 +"  },\"bottom_right\": { \"lat\":  "+ -180.0 + ", \"lon\": " + -90.0 + "    }}}}}}}"
 //    
-//    val esRDD = sc.esRDD("test3/nasa3", query)
-//      
-   
-
+//    //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
+    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+    
     // get the impacts per region    
     val regionImpacts =  mapRegionsToCoordinates().map({ line =>
       getImpactsByRegion(sc, jobConf, line)
-      })
+      }).flatten
       
-    val flatRegion = regionImpacts.flatten
-    
-    val rdd = flatRegion.map({
+    val rdd = regionImpacts.map({
       x => LabeledPoint(x._1, Vectors.dense(x._2)
     )})
     
     //convert map to RDD
     val rddRegionImpacts = sc.parallelize(rdd.toSeq)
     
-    println("---rddRegionImpacts--- " + rddRegionImpacts.count)
-    
-    
-//    //create the labeled points and vectors
-//    val parsedData = rddRegionImpacts.map({x =>
-//      x.map({case(key, value) =>
-//        LabeledPoint(key, Vectors.dense(value))         
-//      })      
-//    })
-    
-   
-   
-
-    
-   // println("----parsedData-----"+ parsedData.count())
+//    println("---rddRegionImpacts--- " + rddRegionImpacts.count)
    
     
-    trainNaiveBayes(rddRegionImpacts)
+    
+    val testRdd = sc.textFile("src/test/scala/testdata.txt")
+    
+    val testData = testRdd.map { x =>
+      val parts = x.split(",")
+      LabeledPoint(parts(0).toDouble, Vectors.dense(parts(1).toDouble))
+      
+    }
+    trainNaiveBayes(rddRegionImpacts, testData)
     
   }
   
-  private def trainNaiveBayes(rddRegionImpacts: RDD[LabeledPoint]){
+  private def trainNaiveBayes(rddRegionImpacts: RDD[LabeledPoint], testData : RDD[LabeledPoint]){
     
      // Split data into training (60%) and test (40%).
     val splits = rddRegionImpacts.randomSplit(Array(0.6, 0.4), seed = 11L)
-    println("----rddRegionImpacts-----"+ rddRegionImpacts.count())
     val training = splits(0)
     val test = splits(1)
 
-    println("----training-----"+ training.count())
+     
+    println("----test-----"+ testData.count())
     
-    println("----test-----"+ test.count())
-    
-    val model = NaiveBayes.train(training, lambda = 1.0)
+    val model = NaiveBayes.train(rddRegionImpacts, lambda = 1.0)
     
     println("model: "+ model.labels.length)
     
-    val predictionAndLabel = test.map(p => (model.predict(p.features), p.label))
+    val predictionAndLabel = rddRegionImpacts.map(p => (model.predict(p.features), p.label))
     
     println("----predictionAndLabel-----"+ predictionAndLabel.count())
     
-    val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
+    val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / testData.count()
     
     println("accuracy: " + accuracy)
     
   }
+  
+ 
   
   private def toVector(data:Array[String], fields:Array[String]):Vector = {
 
@@ -113,19 +101,7 @@ object NaiveBayesSample {
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
   }
   
-  
-  def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : Map[Double, List[GeoPoint]]): Map[Double,Double] = {
-     val regionImpacts = mapRegionsToCoordinates().map({ line =>
-      getImpactsByRegion(sc, jobConf, line)
-      }).flatten.toSeq
-   
-      val rdd = sc.parallelize(regionImpacts)
-    
-   
-    Map(0.0 -> 0.0)
-    
-  }
-  
+ 
   def getImpactsByRegion(sc : SparkContext, jobConf : JobConf, regionGeo : (Double, List[GeoPoint])) : Map[Double,Double] = {
     
   //Configure the source (index)
