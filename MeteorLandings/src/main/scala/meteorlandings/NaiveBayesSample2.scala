@@ -86,8 +86,9 @@ object NaiveBayesSample2 {
   // Split data into training (60%) and test (40%).
       val splits = labeledRdd.randomSplit(Array(0.7, 0.3), seed = 11L)
       val training = splits(0)
+       println("training: "+ training.count())
       val test = splits(1)
-      
+      println("test: "+ test.count())
       val model = NaiveBayes.train(training, lambda = 1.0)
        println("model: "+ model.labels.length)
       
