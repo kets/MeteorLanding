@@ -96,10 +96,33 @@ object NaiveBayesSample2 {
       println("----predictionAndLabel-----"+ predictionAndLabel.count())
       val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
        println("accuracy: " + accuracy)
+       createIndexForLabel(sc, jobConf)
    
     
   }
-   
+     private def createIndexForLabel(sc : SparkContext, jobConf : JobConf) {
+    //get a list of all the recclasses and assign a number to them
+    //Setup the query
+    val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1700\", \"lte\" : \"2050\" }}}}}}"
+     //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
+    println("Using query "+query)
+    jobConf.set("es.query", query)
+    sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
+  
+    val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
+    val meteors = currentResults.map{ case (key, value) => mapWritableToInput(value) }
+    println(meteors.first())
+  
+    val meteorClass = meteors.map{
+      meteor => meteor.getOrElse("recclass", "")
+    }
+    println("classCount: "+ meteorClass.countByValue())
+  
+      
+    
+  }
+    
+
   
     
     def mapWritableToInput(in: MapWritable): Map[String, String] = {
