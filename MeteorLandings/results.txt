@@ -1,0 +1,9 @@
+creating configuration for test3/nasa3 on Some(http://127.0.0.1:9200)
+training: 235
+test: 109
+model: 30
+----predictionAndLabel-----109
+accuracy: 0.9174311926605505
+Using query {"query": {"filtered" : {"filter" : {"range" : {"year": { "gte": "1700", "lte" : "2050" }}}}}}
+Map(mass -> 89400.0, name -> Farmington, location -> 39.750000, -97.033330, year -> 1890, fall -> Fell, id -> 10074, recclass -> L5, lon -> -97.03333, nametype -> Valid, lat -> 39.75)
+classCount: Map(H? -> 1, Acapulcoite -> 1, H3-6 -> 1, CR2-an -> 1, H3.7 -> 1, Iron IAB-sLL -> 1, OC -> 9, LL3.4 -> 1, Mesosiderite-A1 -> 2, EH4 -> 3, L/LL6 -> 2, L3.6 -> 1, Iron IIAB -> 1, H3-5 -> 2, CK4 -> 2, LL5 -> 9, CR2 -> 1, CBa -> 1, H6 -> 40, C2-ung -> 2, L5 -> 27, Mesosiderite-A3/4 -> 1, L3.7-6 -> 1, H3.8 -> 2, H5 -> 71, H/L4 -> 1, L3.7 -> 1, Iron ungrouped -> 1, H4-6 -> 1, Martian chassignite -> 1, LL6 -> 18, L3-6 -> 1, L4 -> 7, CI1 -> 2, H4/5 -> 1, K3 -> 1, CM2 -> 5, Diogenite -> 3, L5/6 -> 1, L/LL4 -> 2, Iron -> 12, H4-5 -> 2, Eucrite-mmict -> 9, Mesosiderite -> 1, H4 -> 24, H5-7 -> 1, L -> 2, Aubrite -> 3, EL6 -> 5, L6 -> 104, Ureilite-an -> 1, Ureilite -> 3, H5-6 -> 2, LL3-6 -> 1, L3 -> 1, CO3.2 -> 1, L3.4 -> 1, H -> 5, Howardite -> 5, LL4 -> 3, Stone-uncl -> 8, Diogenite-pm -> 2, H3 -> 1, LL3.2 -> 1, EH7-an -> 1, Angrite -> 1, EH3/4-an -> 1, H3/4 -> 1, CO3.3 -> 1, L/LL5 -> 2, CV3 -> 4)
