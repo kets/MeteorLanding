@@ -26,13 +26,8 @@ object NaiveBayesSample {
     conf.setMaster("spark://localhost:7077")
     conf.setAppName("MeteorLandings")
     val sc = new SparkContext(conf)    
-      
     
-//    //val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
-//    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ 0.0 + ", \"lon\" : " + 90.0 +"  },\"bottom_right\": { \"lat\":  "+ -180.0 + ", \"lon\": " + -90.0 + "    }}}}}}}"
-//    
-//    //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
-    val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
     
     // get the impacts per region    
     val regionImpacts =  mapRegionsToCoordinates().map({ line =>
@@ -45,10 +40,6 @@ object NaiveBayesSample {
     
     //convert map to RDD
     val rddRegionImpacts = sc.parallelize(rdd.toSeq)
-    
-//    println("---rddRegionImpacts--- " + rddRegionImpacts.count)
-   
-    
     
     val testRdd = sc.textFile("src/test/scala/testdata.txt")
     
@@ -138,7 +129,9 @@ object NaiveBayesSample {
     val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
     println("currentResults for region: ---> " + regionGeo._1 + "\nRESULTS-->" + currentResults.count())
     
-    val meteors = currentResults.map{ case (key, value) => mapWritableToInput(value) }
+    val meteors = currentResults.map { 
+      case (key, value) => mapWritableToInput(value) 
+    }
         
     
     val regionByImpacts = Map(regionGeo._1 -> currentResults.count().toDouble)

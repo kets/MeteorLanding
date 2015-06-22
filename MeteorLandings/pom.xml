@@ -54,22 +54,21 @@
 			<artifactId>elasticsearch-spark_2.10</artifactId>
 			<version>2.1.0.Beta3</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
 			<version>1.4.0</version>
 		</dependency>
 		<dependency>
-	<groupId>org.elasticsearch</groupId>
-	<artifactId>elasticsearch</artifactId>
-	<version>1.0.1</version>
-</dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 		<dependency>
-	<groupId>org.apache.spark</groupId>
-	<artifactId>spark-assembly_2.9.3</artifactId>
-	<version>0.8.1-incubating</version>
-</dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-assembly_2.9.3</artifactId>
+			<version>0.8.1-incubating</version>
+		</dependency>
 	</dependencies>
 
 </project>

@@ -27,12 +27,7 @@ object NaiveBayesSample2 {
     conf.setAppName("MeteorLandings")
     val sc = new SparkContext(conf)   
     val sqlContext = new SQLContext(sc)
-      
-    
-//    //val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1600\", \"lte\" : \"2050\" }}}}}}"
-//    val query = "{\"query\": {\"filtered\" :  {\"filter\" : {\"geo_bounding_box\" : {\"location\": { \"top_left\": { \"lat\" :  "+ 0.0 + ", \"lon\" : " + 90.0 +"  },\"bottom_right\": { \"lat\":  "+ -180.0 + ", \"lon\": " + -90.0 + "    }}}}}}}"
-//    
-//    //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
+
     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
     
     // Create an RDD
@@ -49,13 +44,10 @@ object NaiveBayesSample2 {
     
     val rowRDD = nasardd.map(_.split(";")).map(p => Row(p(0), p(1), p(2), p(3).toDouble, p(4), p(5).substring(6,10), p(6).toInt, p(7).toDouble, p(8).toDouble, p(9)))
     
-    // Apply the schema to the RDD.
-    val nasaSchemaRDD = sqlContext.applySchema(rowRDD, schema) //  applySchema(rowRDD, schema)
+    // Apply the schema to the RDD and Register the SchemaRDD as a table.
+    val nasaSchemaRDD = sqlContext.applySchema(rowRDD, schema).registerTempTable("nasa")
     
-    // Register the SchemaRDD as a table.
-    nasaSchemaRDD.registerTempTable("nasa")
-
-    
+       
     val recclassRDD = sc.textFile("src/main/resources/recclass-type.txt")
     
     val typeSchemaString = "type,id"
@@ -64,9 +56,7 @@ object NaiveBayesSample2 {
     
     val typeRowRdd = recclassRDD.map(_.split(",")).map(p => Row(p(0), p(1)))
     
-    val typeSchemaRDD = sqlContext.applySchema(typeRowRdd, typeSchema)
-    
-    typeSchemaRDD.registerTempTable("type_table")
+    val typeSchemaRDD = sqlContext.applySchema(typeRowRdd, typeSchema).registerTempTable("type_table")
     
     
     val joinResults = sqlContext.sql("SELECT * FROM nasa, type_table where nasa.recclass = type_table.type").collect()
@@ -82,9 +72,18 @@ object NaiveBayesSample2 {
     val labeledRdd = resultsRDD.map { x => 
       LabeledPoint(x.getString(11).toDouble, htf.transform(x))      
     }
-    
-  // Split data into training (60%) and test (40%).
-      val splits = labeledRdd.randomSplit(Array(0.7, 0.3), seed = 11L)
+    trainNaiveBayes(labeledRdd)
+  
+    createIndexForLabel(sc, jobConf)
+ 
+  }
+  
+  /**
+   * 
+   */
+  private def trainNaiveBayes(labeledPointsRDD : RDD[LabeledPoint]) {
+     // Split data into training (60%) and test (40%).
+      val splits = labeledPointsRDD.randomSplit(Array(0.7, 0.3), seed = 11L)
       val training = splits(0)
        println("training: "+ training.count())
       val test = splits(1)
@@ -96,11 +95,9 @@ object NaiveBayesSample2 {
       println("----predictionAndLabel-----"+ predictionAndLabel.count())
       val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
        println("accuracy: " + accuracy)
-       createIndexForLabel(sc, jobConf)
-   
-    
-  }
-     private def createIndexForLabel(sc : SparkContext, jobConf : JobConf) {
+     
+   }
+  private def createIndexForLabel(sc : SparkContext, jobConf : JobConf) {
     //get a list of all the recclasses and assign a number to them
     //Setup the query
     val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1700\", \"lte\" : \"2050\" }}}}}}"
@@ -118,14 +115,8 @@ object NaiveBayesSample2 {
     }
     println("classCount: "+ meteorClass.countByValue())
   
-      
-    
   }
-    
-
-  
-    
-    def mapWritableToInput(in: MapWritable): Map[String, String] = {
+  private def mapWritableToInput(in: MapWritable): Map[String, String] = {
  
     in.map{case (k, v) => (k.toString, v.toString)}.toMap
   }
