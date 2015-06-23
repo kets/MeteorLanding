@@ -62,13 +62,13 @@ object NaiveBayesSample {
      
     println("----test-----"+ testData.count())
     
-    val model = NaiveBayes.train(rddRegionImpacts, lambda = 1.0)
+    val model = NaiveBayes.train(training, lambda = 1.0)
     
     println("model: "+ model.labels.length)
     
-    val predictionAndLabel = rddRegionImpacts.map(p => (model.predict(p.features), p.label))
+    val predictionAndLabel = testData.map(p => (model.predict(p.features), p.label))
     
-    println("----predictionAndLabel-----"+ predictionAndLabel.count())
+    println("----predictionAndLabel-----"+ predictionAndLabel.map(p => println(p._1) + " " + println(p._2)))
     
     val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / testData.count()
     

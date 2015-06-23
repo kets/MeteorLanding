@@ -53,7 +53,7 @@ object MeteorClusters {
     val vectors = meteors.map(meteor => toVector(meteor.getOrElse("location", "").split(","), fields))
     
     // Cluster the data into two classes using KMeans
-    val numClusters = 10
+    val numClusters = 5
     val numIterations = 20
     
     //TODO: check if we can train using another field

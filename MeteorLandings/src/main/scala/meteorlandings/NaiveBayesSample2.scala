@@ -47,73 +47,84 @@ object NaiveBayesSample2 {
     // Apply the schema to the RDD and Register the SchemaRDD as a table.
     val nasaSchemaRDD = sqlContext.applySchema(rowRDD, schema).registerTempTable("nasa")
     
-       
+    //generate an rdd for the class type
     val recclassRDD = sc.textFile("src/main/resources/recclass-type.txt")
     
+    //schema for the class type
     val typeSchemaString = "type,id"
-    
     val typeSchema = StructType(typeSchemaString.split(",").map(fieldName => StructField(fieldName, StringType, true)))
     
+    //generate a RDD of Rows
     val typeRowRdd = recclassRDD.map(_.split(",")).map(p => Row(p(0), p(1)))
     
+    //SchemaRDD
     val typeSchemaRDD = sqlContext.applySchema(typeRowRdd, typeSchema).registerTempTable("type_table")
     
     
-    val joinResults = sqlContext.sql("SELECT * FROM nasa, type_table where nasa.recclass = type_table.type").collect()
+    val queryResults = sqlContext.sql("SELECT * FROM nasa, type_table where nasa.recclass = type_table.type").collect()
     
-//    joinResults.map ( x => x(0) + " " + x(1) + " " + x(2) +" "+x(3) + " " +x(4) + " " + x(5) + " " + x(6) +" "+x(7) + " " 
+//    queryResults.map ( x => x(0) + " " + x(1) + " " + x(2) +" "+x(3) + " " +x(4) + " " + x(5) + " " + x(6) +" "+x(7) + " " 
 //        + x(8) + " " + x(9) + " " + x(10) +" "+x(11)).take(5).foreach(println)
     
-    val resultsRDD = sc.parallelize(joinResults)
+    val resultsRDD = sc.parallelize(queryResults)
     
     //use the hashingtf function to create vectors
     val htf = new HashingTF(500)
     
+    //create an RDD of LabaledPoint
     val labeledRdd = resultsRDD.map { x => 
       LabeledPoint(x.getString(11).toDouble, htf.transform(x))      
     }
+    
     trainNaiveBayes(labeledRdd)
   
-    createIndexForLabel(sc, jobConf)
+    //createIndexForLabel(sc, jobConf)
  
   }
   
   /**
-   * 
+   * Train Naive Bayes and make predictions on test data
    */
   private def trainNaiveBayes(labeledPointsRDD : RDD[LabeledPoint]) {
-     // Split data into training (60%) and test (40%).
+     // Split data into training (70%) and test (30%).
       val splits = labeledPointsRDD.randomSplit(Array(0.7, 0.3), seed = 11L)
       val training = splits(0)
        println("training: "+ training.count())
       val test = splits(1)
       println("test: "+ test.count())
-      val model = NaiveBayes.train(training, lambda = 1.0)
-       println("model: "+ model.labels.length)
       
+      //train the model
+      val model = NaiveBayes.train(training, lambda = 1.0)
+       println("labels: "+ model.labels.length)
+      
+       //predicts values for a given data set using the model trained
+       //returns an RDD[(Double, Double)] where each entry contains the corresponding prediction
       val predictionAndLabel = test.map(p => (model.predict(p.features), p.label))
-      println("----predictionAndLabel-----"+ predictionAndLabel.count())
+      println("prediction count: "+ predictionAndLabel.filter(x => x._1 == x._2).count())
+      predictionAndLabel.collect().map{case (key, value) => "key: "+ print(key) + " value: "+ println(value)}
+      
       val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
        println("accuracy: " + accuracy)
      
-   }
+  }
+ 
   private def createIndexForLabel(sc : SparkContext, jobConf : JobConf) {
     //get a list of all the recclasses and assign a number to them
     //Setup the query
     val query = "{\"query\": {\"filtered\" : {\"filter\" : {\"range\" : {\"year\": { \"gte\": \"1700\", \"lte\" : \"2050\" }}}}}}"
      //val query = "{\"query\": {\"filtered\" : {\"query\" : {\"match_all\" : {}}}}}"
-    println("Using query "+query)
+    //println("Using query "+query)
     jobConf.set("es.query", query)
     sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
   
     val currentResults = sc.hadoopRDD(jobConf, classOf[EsInputFormat[Object, MapWritable]], classOf[Object], classOf[MapWritable])
     val meteors = currentResults.map{ case (key, value) => mapWritableToInput(value) }
-    println(meteors.first())
+    //println(meteors.first())
   
     val meteorClass = meteors.map{
       meteor => meteor.getOrElse("recclass", "")
     }
-    println("classCount: "+ meteorClass.countByValue())
+    //println("classCount: "+ meteorClass.countByValue())
   
   }
   private def mapWritableToInput(in: MapWritable): Map[String, String] = {
