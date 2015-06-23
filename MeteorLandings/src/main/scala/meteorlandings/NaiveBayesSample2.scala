@@ -69,7 +69,7 @@ object NaiveBayesSample2 {
     val resultsRDD = sc.parallelize(queryResults)
     
     //use the hashingtf function to create vectors
-    val htf = new HashingTF(500)
+     val htf = new HashingTF(500)
     
     //create an RDD of LabaledPoint
     val labeledRdd = resultsRDD.map { x => 
@@ -86,7 +86,7 @@ object NaiveBayesSample2 {
    * Train Naive Bayes and make predictions on test data
    */
   private def trainNaiveBayes(labeledPointsRDD : RDD[LabeledPoint]) {
-     // Split data into training (70%) and test (30%).
+     // Split data into training (70%) and test (30%). 
       val splits = labeledPointsRDD.randomSplit(Array(0.7, 0.3), seed = 11L)
       val training = splits(0)
        println("training: "+ training.count())
@@ -101,7 +101,7 @@ object NaiveBayesSample2 {
        //returns an RDD[(Double, Double)] where each entry contains the corresponding prediction
       val predictionAndLabel = test.map(p => (model.predict(p.features), p.label))
       println("prediction count: "+ predictionAndLabel.filter(x => x._1 == x._2).count())
-      predictionAndLabel.collect().map{case (key, value) => "key: "+ print(key) + " value: "+ println(value)}
+      //predictionAndLabel.collect().map{case (key, value) => "key: "+ print(key) + " value: "+ println(value)}
       
       val accuracy = 1.0 * predictionAndLabel.filter(x => x._1 == x._2).count() / test.count()
        println("accuracy: " + accuracy)
