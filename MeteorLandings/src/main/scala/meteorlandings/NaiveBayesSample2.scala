@@ -81,6 +81,10 @@ object NaiveBayesSample2 {
     //createIndexForLabel(sc, jobConf)
  
   }
+   
+  def closurePractice() {
+    
+  }
   
   /**
    * Train Naive Bayes and make predictions on test data
