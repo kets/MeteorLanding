@@ -21,10 +21,13 @@ object MeteorClusters {
   
   def main(args: Array[String]){
   
-    val conf = new SparkConf
-    conf.setMaster("spark://localhost:7077")
+    val conf = new SparkConf().setAppName("MeteorClusters").setMaster("spark://localhost:7077")
+    conf.set("es.index.auto.create", "true");
     val sc = new SparkContext(conf)    
-      
+    
+    sc.addJar("target/scala-2.10/meteors-landings_2.10-1.0.jar")
+    sc.addJar("lib/elasticsearch-spark_2.10-2.1.0.BUILD-SNAPSHOT.jar")
+    sc.addJar("lib/elasticsearch-1.5.1.jar")
     //Configure the source (index)
     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
     

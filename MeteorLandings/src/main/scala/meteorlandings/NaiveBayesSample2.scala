@@ -36,54 +36,50 @@ object NaiveBayesSample2 {
      // The schema is encoded in a string
     val schemaString = "name,nametype,recclass,mass,fall,year,id,lat,lon,location"
     
-    // Generate the schema based on the string of schema
-    val schema =
-      StructType(
-        schemaString.split(",").map(fieldName => StructField(fieldName, StringType, true)))
-
-    
-    val rowRDD = nasardd.map(_.split(";")).map(p => Row(p(0), p(1), p(2), p(3).toDouble, p(4), p(5).substring(6,10), p(6).toInt, p(7).toDouble, p(8).toDouble, p(9)))
-    
-    // Apply the schema to the RDD and Register the SchemaRDD as a table.
-    val nasaSchemaRDD = sqlContext.applySchema(rowRDD, schema).registerTempTable("nasa")
-    
-    //generate an rdd for the class type
-    val recclassRDD = sc.textFile("src/main/resources/recclass-type.txt")
-    
-    //schema for the class type
-    val typeSchemaString = "type,id"
-    val typeSchema = StructType(typeSchemaString.split(",").map(fieldName => StructField(fieldName, StringType, true)))
-    
-    //generate a RDD of Rows
-    val typeRowRdd = recclassRDD.map(_.split(",")).map(p => Row(p(0), p(1)))
-    
-    //SchemaRDD
-    val typeSchemaRDD = sqlContext.applySchema(typeRowRdd, typeSchema).registerTempTable("type_table")
-    
-    
-    val queryResults = sqlContext.sql("SELECT * FROM nasa, type_table where nasa.recclass = type_table.type").collect()
-    
-//    queryResults.map ( x => x(0) + " " + x(1) + " " + x(2) +" "+x(3) + " " +x(4) + " " + x(5) + " " + x(6) +" "+x(7) + " " 
-//        + x(8) + " " + x(9) + " " + x(10) +" "+x(11)).take(5).foreach(println)
-    
-    val resultsRDD = sc.parallelize(queryResults)
-    
-    //use the hashingtf function to create vectors
-     val htf = new HashingTF(500)
-    
-    //create an RDD of LabaledPoint
-    val labeledRdd = resultsRDD.map { x => 
-      LabeledPoint(x.getString(11).toDouble, htf.transform(x))      
-    }
-    
-    trainNaiveBayes(labeledRdd)
+//    // Generate the schema based on the string of schema
+//    val schema =
+//      StructType(
+//        schemaString.split(",").map(fieldName => StructField(fieldName, StringType, true)))
+//
+//    
+//    val rowRDD = nasardd.map(_.split(";")).map(p => Row(p(0), p(1), p(2), p(3).toDouble, p(4), p(5).substring(6,10), p(6).toInt, p(7).toDouble, p(8).toDouble, p(9)))
+//    
+//    // Apply the schema to the RDD and Register the SchemaRDD as a table.
+//    val nasaSchemaRDD = sqlContext.applySchema(rowRDD, schema).registerTempTable("nasa")
+//    
+//    //generate an rdd for the class type
+//    val recclassRDD = sc.textFile("src/main/resources/recclass-type.txt")
+//    
+//    //schema for the class type
+//    val typeSchemaString = "type,id"
+//    val typeSchema = StructType(typeSchemaString.split(",").map(fieldName => StructField(fieldName, StringType, true)))
+//    
+//    //generate a RDD of Rows
+//    val typeRowRdd = recclassRDD.map(_.split(",")).map(p => Row(p(0), p(1)))
+//    
+//    //SchemaRDD
+//    val typeSchemaRDD = sqlContext.applySchema(typeRowRdd, typeSchema).registerTempTable("type_table")
+//    
+//    
+//    val queryResults = sqlContext.sql("SELECT * FROM nasa, type_table where nasa.recclass = type_table.type").collect()
+//    
+////    queryResults.map ( x => x(0) + " " + x(1) + " " + x(2) +" "+x(3) + " " +x(4) + " " + x(5) + " " + x(6) +" "+x(7) + " " 
+////        + x(8) + " " + x(9) + " " + x(10) +" "+x(11)).take(5).foreach(println)
+//    
+//    val resultsRDD = sc.parallelize(queryResults)
+//    
+//    //use the hashingtf function to create vectors
+//     val htf = new HashingTF(500)
+//    
+//    //create an RDD of LabaledPoint
+//    val labeledRdd = resultsRDD.map { x => 
+//      LabeledPoint(x.getString(11).toDouble, htf.transform(x))      
+//    }
+//    
+//    trainNaiveBayes(labeledRdd)
   
     //createIndexForLabel(sc, jobConf)
  
-  }
-   
-  def closurePractice() {
-    
   }
   
   /**
