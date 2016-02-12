@@ -2,7 +2,7 @@ name := "meteors-landings"
 
 version := "1.0"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.10"
 
 scalacOptions ++= Seq("-unchecked","-deprecation")
 

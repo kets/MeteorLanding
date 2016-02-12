@@ -3,7 +3,6 @@ package meteorlandings
 
 import org.apache.spark.SparkContext._
 import org.apache.spark.sql._
-//import org.elasticsearch.spark.sql.`package`.SparkSchemaRDDFunctions
 import org.elasticsearch.spark.sql._
 import org.elasticsearch.spark._
 import org.apache.spark.SparkConf
@@ -27,7 +26,7 @@ object NASADataImport {
     val sqlContext = new SQLContext(sc)
     sc.addJar("target/scala-2.10/meteors-landings_2.10-1.0.jar")
     sc.addJar("lib/elasticsearch-2.1.1.jar")
-    sc.addJar("lib/elasticsearch-hadoop-2.1.2.jar")
+    sc.addJar("lib/elasticsearch-spark_2.11-2.2.0-rc1.jar")
     sc.addJar("lib/spark-assembly-1.6.0-hadoop2.6.0.jar")
     import sqlContext.implicits._
 
