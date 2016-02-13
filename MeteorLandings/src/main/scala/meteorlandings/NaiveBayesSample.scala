@@ -27,7 +27,7 @@ object NaiveBayesSample {
     conf.setAppName("MeteorLandings")
     val sc = new SparkContext(conf)    
     
-     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("localhost:9200"))
     
     // get the impacts per region    
     val regionImpacts =  mapRegionsToCoordinates().map({ line =>

@@ -7,7 +7,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkContext
 import org.apache.spark.sql._
-import org.elasticsearch.spark
+import org.elasticsearch.spark._
 import org.apache.spark.serializer.KryoSerializer
 import org.apache.hadoop.io.MapWritable
 import org.elasticsearch.hadoop.mr.EsInputFormat
@@ -22,7 +22,7 @@ object MeteorsByYear {
     val sc = new SparkContext(conf)    
     
      //Configure the source (index)
-     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("http://127.0.0.1:9200"))
+     val jobConf = SharedESConfig.setupEsOnSparkContext(sc, "test3/nasa3", Some("localhost:9200"))
      
     
     //Setup the query

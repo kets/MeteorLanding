@@ -25,9 +25,9 @@ object NASADataImport {
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
     sc.addJar("target/scala-2.10/meteors-landings_2.10-1.0.jar")
-    sc.addJar("lib/elasticsearch-2.1.1.jar")
-    sc.addJar("lib/elasticsearch-spark_2.11-2.2.0-rc1.jar")
-    sc.addJar("lib/spark-assembly-1.6.0-hadoop2.6.0.jar")
+//    sc.addJar("lib/elasticsearch-2.1.1.jar")
+//    sc.addJar("lib/elasticsearch-spark_2.11-2.2.0-rc1.jar")
+//    sc.addJar("lib/spark-assembly-1.6.0-hadoop2.6.0.jar")
     import sqlContext.implicits._
 
     // Create an RDD, then convert to DataFrame --> update from Spark 1.2 to Spark 1.6 which introduces dataframes

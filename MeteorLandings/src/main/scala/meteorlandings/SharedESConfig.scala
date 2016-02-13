@@ -6,6 +6,7 @@ import scala.collection.JavaConversions._
 import org.apache.spark._
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
+import org.elasticsearch.spark._
 // ES imports
 import org.elasticsearch.hadoop.mr.EsOutputFormat
 import org.elasticsearch.hadoop.mr.EsInputFormat
@@ -14,6 +15,7 @@ import org.elasticsearch.hadoop.cfg.ConfigurationOptions
 import org.apache.hadoop.mapred.{FileOutputCommitter, FileOutputFormat, JobConf, OutputFormat}
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.io.{MapWritable, Text, NullWritable}
+import org.elasticsearch.spark.rdd
 
 
 object SharedESConfig {
@@ -24,6 +26,13 @@ object SharedESConfig {
     jobConf.set("mapred.output.format.class", "org.elasticsearch.hadoop.mr.EsOutputFormat")
     jobConf.setOutputCommitter(classOf[FileOutputCommitter])
     jobConf.set(ConfigurationOptions.ES_RESOURCE, esResource)
+    
+//    sc.addJar("target/scala-2.10/meteors-landings_2.10-1.0.jar")
+//    sc.addJar("lib/elasticsearch-2.2.0.jar")
+//    sc.addJar("lib/elasticsearch-hadoop-2.2.0.jar")
+//    sc.addJar("lib/elasticsearch-spark_2.11-2.2.0-rc1.jar")
+//    sc.addJar("lib/spark-assembly-1.6.0-hadoop2.6.0.jar")
+    
     esNodes match {
       case Some(node) => jobConf.set(ConfigurationOptions.ES_NODES, node)
       case _ => // Skip it
