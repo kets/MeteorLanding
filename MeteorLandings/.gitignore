@@ -3,4 +3,4 @@
 /target/*
 /project/*
 *.cache
-results.txt
+.results.txt
