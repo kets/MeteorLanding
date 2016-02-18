@@ -38,21 +38,6 @@ object NASADataImport {
                     
     nasardd.registerTempTable("nasa") 
 
-//    // The schema is encoded in a string
-//    val schemaString = "name,nametype,recclass,mass,fall,year,id,lat,lon,location"
-//    //Aachen,Valid,L5,21,Fell,01/01/1880 12:00:00 AM,1,50.775000,6.083330,"50.775000, 6.083330"
-//    // Import Spark SQL data types and Row.
-//
-//    // Generate the schema based on the string of schema
-//    //val schema =  schemaString.split(",").map(fieldName => StructField(fieldName, StringType, true)))
-//
-//    // Convert records of the RDD (meteors) to Rows.
-//    val rowRDD = nasardd.map(_.split(";")).map(p => Row(p(0), p(1), p(2), p(3).toDouble, p(4), p(5).substring(6,10), p(6).toInt, p(7).toDouble, p(8).toDouble, p(9)))
-//       
-//    // Apply the schema to the RDD.
-//    val nasaSchemaRDD = sqlContext.applySchema(rowRDD, schema) //  applySchema(rowRDD, schema)
-//    
-//    nasaSchemaRDD.printSchema();
     println(nasardd.schema);
 
     // Register the SchemaRDD as a table.
